@@ -8,7 +8,8 @@
       "mcp__firebase__firebase_get_project",
       "mcp__firebase__firebase_init",
       "Bash(firebase deploy:*)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 function Navbar() {
-  const { currentUser, logout } = useAuth()
+  const { currentUser, userNickname, logout } = useAuth()
 
   return (
     <nav className="bg-white shadow-md">
@@ -28,12 +28,10 @@ function Navbar() {
                   내 상품
                 </Link>
                 <div className="flex items-center gap-2">
-                  <img
-                    src={currentUser.photoURL}
-                    alt={currentUser.displayName}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="text-sm text-gray-700">{currentUser.displayName}</span>
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+                    {userNickname ? userNickname[0].toUpperCase() : '?'}
+                  </div>
+                  <span className="text-sm text-gray-700">{userNickname || '사용자'}</span>
                 </div>
                 <button
                   onClick={logout}

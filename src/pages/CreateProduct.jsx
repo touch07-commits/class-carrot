@@ -8,7 +8,7 @@ import ProductForm from '../components/ProductForm'
 
 function CreateProduct() {
   const navigate = useNavigate()
-  const { currentUser } = useAuth()
+  const { currentUser, userNickname } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (formData, imageFile) => {
@@ -28,7 +28,7 @@ function CreateProduct() {
         ...formData,
         imageUrl,
         sellerId: currentUser.uid,
-        sellerName: currentUser.displayName,
+        sellerName: userNickname || '익명',
         status: 'available',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
