@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { collection, query, where, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
-import { ref, deleteObject } from 'firebase/storage'
-import { db, storage } from '../firebase/config'
+import { db } from '../firebase/config'
 import { useAuth } from '../contexts/AuthContext'
-import { uploadImage } from '../utils/imageUpload'
 import ProductForm from '../components/ProductForm'
 
 function MyProducts() {
@@ -39,12 +37,6 @@ function MyProducts() {
     if (!window.confirm('정말 삭제하시겠습니까?')) return
 
     try {
-      // Storage에서 이미지 삭제
-      if (product.imageUrl) {
-        const imageRef = ref(storage, product.imageUrl)
-        await deleteObject(imageRef)
-      }
-
       // Firestore에서 문서 삭제
       await deleteDoc(doc(db, 'products', product.id))
 
@@ -60,26 +52,13 @@ function MyProducts() {
     setEditingProduct(product)
   }
 
-  const handleUpdate = async (formData, imageFile) => {
+  const handleUpdate = async (formData) => {
     setIsSubmitting(true)
 
     try {
-      let imageUrl = editingProduct.imageUrl
-
-      // 새 이미지가 있으면 업로드
-      if (imageFile) {
-        // 기존 이미지 삭제
-        if (editingProduct.imageUrl) {
-          const oldImageRef = ref(storage, editingProduct.imageUrl)
-          await deleteObject(oldImageRef)
-        }
-        imageUrl = await uploadImage(imageFile, currentUser.uid)
-      }
-
       // Firestore 업데이트
       await updateDoc(doc(db, 'products', editingProduct.id), {
         ...formData,
-        imageUrl,
         updatedAt: new Date(),
       })
 

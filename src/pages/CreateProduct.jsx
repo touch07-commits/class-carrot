@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { useAuth } from '../contexts/AuthContext'
-import { uploadImage } from '../utils/imageUpload'
 import ProductForm from '../components/ProductForm'
 
 function CreateProduct() {
@@ -11,22 +10,13 @@ function CreateProduct() {
   const { currentUser, userNickname } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (formData, imageFile) => {
-    if (!imageFile) {
-      alert('이미지를 선택해주세요.')
-      return
-    }
-
+  const handleSubmit = async (formData) => {
     setIsLoading(true)
 
     try {
-      // 이미지 업로드
-      const imageUrl = await uploadImage(imageFile, currentUser.uid)
-
       // Firestore에 상품 데이터 저장
       await addDoc(collection(db, 'products'), {
         ...formData,
-        imageUrl,
         sellerId: currentUser.uid,
         sellerName: userNickname || '익명',
         status: 'available',

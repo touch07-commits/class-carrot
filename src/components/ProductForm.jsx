@@ -5,54 +5,53 @@ function ProductForm({ initialData, onSubmit, isLoading }) {
     title: initialData?.title || '',
     description: initialData?.description || '',
     price: initialData?.price || '',
+    imageUrl: initialData?.imageUrl || '',
   })
-  const [imageFile, setImageFile] = useState(null)
-  const [imagePreview, setImagePreview] = useState(initialData?.imageUrl || null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setImageFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSubmit({ ...formData, price: Number(formData.price) }, imageFile)
+    onSubmit({
+      ...formData,
+      price: Number(formData.price),
+      imageUrl: formData.imageUrl.trim() || null
+    })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          상품 이미지
+        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+          상품 이미지 URL (선택사항)
         </label>
-        <div className="flex flex-col items-center">
-          {imagePreview && (
+        <input
+          type="url"
+          id="imageUrl"
+          name="imageUrl"
+          value={formData.imageUrl}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="https://example.com/image.jpg"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          이미지 URL을 입력하세요. 비워두면 기본 이미지가 표시됩니다.
+        </p>
+        {formData.imageUrl && (
+          <div className="mt-4">
             <img
-              src={imagePreview}
+              src={formData.imageUrl}
               alt="미리보기"
-              className="w-full max-w-md h-64 object-cover rounded-lg mb-4"
+              className="w-full max-w-md h-64 object-cover rounded-lg"
+              onError={(e) => {
+                e.target.style.display = 'none'
+              }}
             />
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full max-w-md"
-            required={!initialData}
-          />
-        </div>
+          </div>
+        )}
       </div>
 
       <div>
