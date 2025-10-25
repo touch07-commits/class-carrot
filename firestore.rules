@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /products/{productId} {
+      // 모든 사람이 상품을 읽을 수 있음
+      allow read: if true;
+
+      // 로그인한 사용자만 상품을 생성할 수 있음
+      allow create: if request.auth != null
+        && request.resource.data.sellerId == request.auth.uid;
+
+      // 본인이 등록한 상품만 수정/삭제할 수 있음
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.sellerId;
+    }
+  }
+}
